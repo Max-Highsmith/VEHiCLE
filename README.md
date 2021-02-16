@@ -1,4 +1,4 @@
-#VEHiCLE Variationally Encoded Hi-C Loss Enhancement
+# VEHiCLE Variationally Encoded Hi-C Loss Enhancement
 This directory contains code used in running experiments for the paper:
 
 Highsmith, M. & Cheng, J. VEHiCLE: a Variationally Encoded Hi-C Loss Enhancement algorithm. doi:10.1101/2020.12.07.413559.
