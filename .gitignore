@@ -1,0 +1,12 @@
+Data/HiCs/*
+Data/Constraints/*
+Data/Full_Mats/*
+Data/Splits/*
+*/__pycache__/*
+other_tools/juicer_*
+lightning_logs/*
+Trained_Models/*
+.ipynb_checkpoints/*
+.gitignore.swp
+
+
