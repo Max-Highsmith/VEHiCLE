@@ -26,7 +26,7 @@ This directory contains code used in running experiments for the paper:
 	
 To view the interactive tunable Hi-C Contact matrix generating GUI run
 > python Generative_GUI.py
-![gui](gui.png)
+![gui]("Utils/gui.png)
 To use VEHiCLE to enhance your own Hi-C data format your data into a pytorch dataloader with dataset of shape (sample size, 1, 269, 269) and run
 > python enhance_HiC.py 
 after replacing the currently loaded dataset object with your revised dataset.
