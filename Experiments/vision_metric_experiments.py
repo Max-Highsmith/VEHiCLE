@@ -26,8 +26,8 @@ ds     = torch.from_numpy(dm_test.test_dataloader().dataset.data[65:66])
 target = torch.from_numpy(dm_test.test_dataloader().dataset.target[65:66])
 
 vehicleModel  = vehicle.GAN_Model()
-#model_vehicle = vehicleModel.load_from_checkpoint("Trained_Models/vehicle_gan.ckpt")
-model_vehicle = vehicleModel.load_from_checkpoint("lightning_logs/version_0/checkpoints/epoch=49.ckpt")
+model_vehicle = vehicleModel.load_from_checkpoint("Trained_Models/vehicle_gan.ckpt")
+#model_vehicle = vehicleModel.load_from_checkpoint("lightning_logs/version_0/checkpoints/epoch=49.ckpt")
 
 model_hicplus = hicplus.Net(40,28)
 #model_hicplus.load_state_dict(torch.load("Trained_Models/hicplus_weights"))

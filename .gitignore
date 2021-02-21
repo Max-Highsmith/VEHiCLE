@@ -8,5 +8,7 @@ lightning_logs/*
 Trained_Models/*
 .ipynb_checkpoints/*
 .gitignore.swp
-
+hicqc_inputs/*
+hicqc_results/*
+other_tools/3D*
 
