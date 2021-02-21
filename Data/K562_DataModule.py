@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import sys
-from utils import utils as ut
+from Utils import utils as ut
 import pdb
 import subprocess
 import glob
@@ -85,7 +85,7 @@ class K562Module(pl.LightningDataModule):
             self.extract_create_numpy()
 
         print("oh were doing it")
-        for i in range(10,22):
+        for i in [4,20,16,14]:
             target =  ut.splitPieces("Data/Full_Mats/"+self.line+"_mat_high_chr"+str(i)+"_res_"+str(self.res)+".npy",self.piece_size, self.step)
             data   =  ut.splitPieces("Data/Full_Mats/"+self.line+"_mat_low_chr"+str(i)+"_res_"+str(self.res)+".npy", self.piece_size, self.step)
             np.save("Data/Splits/"+self.line+"_high_chr_"+str(i)+"_res_"+str(self.res)+"_piece_"+str(self.piece_size), target)
