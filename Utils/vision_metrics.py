@@ -205,7 +205,7 @@ class VisionMetrics:
             data, full_target, info = epoch
             target                  = full_target[:,:,6:-6,6:-6]
             filter_data             = data[:,:,6:-6,6:-6]
-            if spliter == "vehicle":  #no need to seperate pieces
+            if spliter == "vehicle" or spliter == "large":  #no need to seperate pieces
                 output                  = model(data).detach()
 
             if spliter == "hicplus" or spliter == "hicsr":  #separater into 40x40 windows
@@ -223,6 +223,9 @@ class VisionMetrics:
                         temp = data[:,:,i:i+40, j:j+40]
                         output[:,:,i+6:i+34, j+6:j+34] = model(temp)[:,:,6:-6,6:-6]
                 output = output[:,:,6:-6,6:-6].detach()
+
+            if spliter == "large_deephic":
+                output  = model(data).detach()[:,:,6:-6,6:-6]
 
 
             self._logPCC(data=filter_data, target=target, output=output)

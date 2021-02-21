@@ -1,3 +1,4 @@
+import torch
 import gc
 import matplotlib.pyplot as plt
 import pdb
@@ -76,4 +77,13 @@ def constraints2mats(row, col, ifs):
 		mat[c-smallbin,r-smallbin] = i
 	return mat
 
-
+def splitto40(data, target):
+    split_data   = []
+    split_target = []
+    for i in range(0, data.shape[2]-40,40):
+        for j in range(0, target.shape[2]-40, 40):
+            split_data.append(data[:,:,i:i+40, j:j+40])
+            split_target.append(target[:,:,i:i+40, j:j+40])
+    split_data   = torch.cat(split_data, 0)
+    split_target = torch.cat(split_target, 0)
+    return split_data, split_target
