@@ -11,5 +11,5 @@ dm.setup(stage='fit')
 
 model = GAN_Model()
 
-trainer = Trainer(gpus=1)
+trainer = Trainer(gpus=1, max_epochs=50)
 trainer.fit(model, dm)

@@ -26,10 +26,12 @@ ds     = torch.from_numpy(dm_test.test_dataloader().dataset.data[65:66])
 target = torch.from_numpy(dm_test.test_dataloader().dataset.target[65:66])
 
 vehicleModel  = vehicle.GAN_Model()
-model_vehicle = vehicleModel.load_from_checkpoint("Trained_Models/vehicle_gan.ckpt")
+#model_vehicle = vehicleModel.load_from_checkpoint("Trained_Models/vehicle_gan.ckpt")
+model_vehicle = vehicleModel.load_from_checkpoint("lightning_logs/version_0/checkpoints/epoch=49.ckpt")
 
 model_hicplus = hicplus.Net(40,28)
-model_hicplus.load_state_dict(torch.load("Trained_Models/hicplus_weights"))
+#model_hicplus.load_state_dict(torch.load("Trained_Models/hicplus_weights"))
+model_hicplus.load_state_dict(torch.load("hicplus_win40.pytorch"))
 
 model_hicsr   = hicsr.Generator(num_res_blocks=15)
 HICSR_WEIGHTS  = "Trained_Models/hicsr_weights.pth"
@@ -68,7 +70,7 @@ hicsr_out = hicsr_out[6:-6, 6:-6]
 lowres_out  = ds[0][0][6:-6,6:-6]
 target_out  = target[0][0][6:-6,6:-6]
 
-
+pdb.set_trace()
 #show comparison plots
 fig, ax = plt.subplots(2,6)
 for i in range(0, 2):
@@ -117,7 +119,7 @@ plt.show()
 
 
 v_m ={}
-chro = 20
+chro = 4
 #compute vision metrics
 print("vehicle")
 visionMetrics = vm.VisionMetrics()
