@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import sys
-from utils import utils as ut
+from Utils import utils as ut
 import pdb
 import subprocess
 import glob
@@ -82,7 +82,7 @@ class HMECModule(pl.LightningDataModule):
             subprocess.run("mkdir Data/Splits", shell=True)
 
         globs    = glob.glob("Data/Full_Mats/"+self.line+"_mat_high_chr16_res_"+str(self.res)+".npy")
-        if CREATING:#len(globs) !=1 :
+        if len(globs) !=1 :
             print("overide extract_create_numpy()ing")
             self.extract_create_numpy()
 
@@ -96,7 +96,8 @@ class HMECModule(pl.LightningDataModule):
     def prepare_data(self):
         print("Preparing the Preparations ...")
         globs       = glob.glob("Data/Splits/"+self.line+"_high_chr_16_res_"+str(self.res)+"_piece_"+str(self.piece_size)+str(".npy"))
-        if not CREATING: #len(globs) == 1 :
+        pdb.set_trace()
+        if len(globs) == 1 :
             print("Ready to go")
         else:
             print(".. wait, first we need to split the mats")

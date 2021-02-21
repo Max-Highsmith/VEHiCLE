@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import sys
-from utils import utils as ut
+from Utils import utils as ut
 import pdb
 import subprocess
 import glob
@@ -85,7 +85,7 @@ class IMR90Module(pl.LightningDataModule):
             self.extract_create_numpy()
 
         print("oh were doing it")
-        for i in [4]:
+        for i in [4,16,14,20]:
             target =  ut.splitPieces("Data/Full_Mats/"+self.line+"_mat_high_chr"+str(i)+"_res_"+str(self.res)+".npy",self.piece_size, self.step)
             data   =  ut.splitPieces("Data/Full_Mats/"+self.line+"_mat_low_chr"+str(i)+"_res_"+str(self.res)+".npy", self.piece_size, self.step)
             np.save("Data/Splits/"+self.line+"_high_chr_"+str(i)+"_res_"+str(self.res)+"_piece_"+str(self.piece_size), target)
@@ -94,7 +94,7 @@ class IMR90Module(pl.LightningDataModule):
     def prepare_data(self):
         print("Preparing the Preparations ...")
         globs       = glob.glob("Data/Splits/"+self.line+"_high_chr_4_res_"+str(self.res)+"_piece_"+str(self.piece_size)+str(".npy"))
-        if len(globs) == 1:
+        if len(globs) == 4:
             print("Ready to go")
         else:
             print(".. wait, first we need to split the mats")
