@@ -1,4 +1,4 @@
-for net in deephic_big deephic_small hicsr_big hicsr_small hicplus_big hicplus_small vehicle
+for net in deephic_small hicsr_small hicplus_small deephic_big hicsr_big hicplus_big vehicle down
 do
 	for chro in 4 14 16 20
 	do

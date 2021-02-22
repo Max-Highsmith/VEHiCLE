@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from Data.GM12878_DataModule import GM12878Module
 
-CHRO       = 4 
+CHRO       = 4
 RES        = 10000
 PIECE_SIZE = 269
 
@@ -73,9 +73,10 @@ dm_test.prepare_data()
 dm_test.setup(stage=CHRO)
 
 
+
 for s, sample in enumerate(dm_test.test_dataloader()):
     print(str(s)+"/"+str(dm_test.test_dataloader().dataset.data.shape[0]))
-    if s >170:
+    if s >100:
         break
 
     data, target, _ = sample
@@ -160,7 +161,7 @@ subprocess.run("gzip hicqc_inputs/down_"+str(CHRO),     shell=True)
 subprocess.run("gzip hicqc_inputs/bins_"+str(CHRO)+".bed",     shell=True)
 
 
-tool_names   = ['hicplus_small', 'deephic_small', 'hicsr_small', 'hicplus_big', 'deephic_big', 'hicsr_big', 'vehicle']
+tool_names   = ['hicplus_small', 'deephic_small', 'hicsr_small', 'hicplus_big', 'deephic_big', 'hicsr_big', 'vehicle', 'down']
 BASE_STR = '/home/heracles/Documents/Professional/Research/VEHiCLE/hicqc_inputs/'
 sample_files = [
             'hicqc_inputs/metric_hicplus_small_'+str(CHRO)+".samples",
@@ -169,7 +170,8 @@ sample_files = [
             'hicqc_inputs/metric_hicplus_big_'+str(CHRO)+".samples",
             'hicqc_inputs/metric_deephic_big_'+str(CHRO)+".samples",
             'hicqc_inputs/metric_hicsr_big_'+str(CHRO)+".samples",
-            'hicqc_inputs/metric_vehicle_'+str(CHRO)+".samples"
+            'hicqc_inputs/metric_vehicle_'+str(CHRO)+".samples",
+            'hicqc_inputs/metric_down_'+str(CHRO)+".samples"
             ]
 
 pair_files  = [
@@ -179,18 +181,19 @@ pair_files  = [
             'hicqc_inputs/metric_hicplus_big_'+str(CHRO)+".pairs",
             'hicqc_inputs/metric_deephic_big_'+str(CHRO)+".pairs",
             'hicqc_inputs/metric_hicsr_big_'+str(CHRO)+".pairs",
-            'hicqc_inputs/metric_vehicle_'+str(CHRO)+".pairs"
+            'hicqc_inputs/metric_vehicle_'+str(CHRO)+".pairs",
+            'hicqc_inputs/metric_down_'+str(CHRO)+".pairs"
             ]
 
 for tool_name, sample_fn, pair_fn in zip(tool_names, sample_files, pair_files):
     hic_metric_sample = open(sample_fn, 'w')
     hic_metric_pair   = open(pair_fn, 'w')
-    SAMPLE_STRING="down     "+BASE_STR+"down_"+str(CHRO)+".gz\n"+str(tool_name)+"    "+BASE_STR+str(tool_name)+"_"+str(CHRO)+".gz"
-    PAIR_STRING  = "down\t"+str(tool_name)
+    SAMPLE_STRING="original     "+BASE_STR+"original_"+str(CHRO)+".gz\n"+str(tool_name)+"    "+BASE_STR+str(tool_name)+"_"+str(CHRO)+".gz"
+    PAIR_STRING  = "original\t"+str(tool_name)
     hic_metric_sample.write(SAMPLE_STRING)
     hic_metric_pair.write(PAIR_STRING)
-
 '''
+
 hic_metric_samples = open("hicqc_inputs/hic_metric.samples", 'w')
 hic_metric_pairs   = open("hicqc_inputs/hic_metric.pairs", 'w')
 SAMPLE_STRING="Down     /home/heracles/Documents/Professional/Research/lsdcm/other_tools/3DChromatin_ReplicateQC/examples/down_"+str(CHRO)+".gz\n"\
