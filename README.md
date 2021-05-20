@@ -29,12 +29,14 @@ To view the interactive tunable Hi-C Contact matrix generating GUI run
 ![gui](Utils/gui.png)
 
 To enhance your own HiC data run
-> Enhance_Your_Oen_Data.py
-You will need to edit the configuration variables:
+> Enhance_Your_Own_Data.py
 
-YOUR_CELL_LINE : "name of Cell line"
-LOW_RES_HIC    : "location of hic data"
-CHRO	       : "chromosome number to be inspected"
+### You will need to edit the configuration variables:
+<ol>
+<li>YOUR_CELL_LINE : "name of Cell line"</li>
+<li>LOW_RES_HIC    : "location of hic data"</li>
+<li>CHRO	       : "chromosome number to be inspected"</li>
+</ol>
 
 This will extract Low Res HiC Contact Matrices in
 	"<Your_Line>/Full_Mats"
@@ -42,7 +44,7 @@ and will place an enhanced matrix in
 	"<Your_Line>/Full_Enhanced"
 
 To obtain the Insulation Score Identified TAD boundaries run
-> python Insulation.py <enhanced cell_line> <chromosome> <coordinate file> <resolution> <tadfn>
+> python Insulation.py enhanced_cell_line chromosome coordinate_file resolution tadfn
 
 example
 > python Insulation.py GM12878/Full_Enhanced/full_enh.npy 7 GM12878/Full_Mats_Coords/coords_chr7_res_10000.npy 10000 enh.txt
