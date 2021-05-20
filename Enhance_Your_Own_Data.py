@@ -49,7 +49,7 @@ class CustomModule(pl.LightningDataModule):
             self.split_numpy()
     
     def create_numpy(self):
-        for i in range(5,8):
+        for i in range(1,23):
             low_txt = self.line_name+"/Constraints/low_chr"+str(i)+"_res_"+str(self.res)+".txt"
             target, data = ut.loadBothConstraints(low_txt,
                                                 low_txt,
@@ -58,7 +58,7 @@ class CustomModule(pl.LightningDataModule):
 
 
     def split_numpy(self):
-        for i in range(1,4):
+        for i in range(1,23):
             data = ut.splitPieces(self.line_name+"/Full_Mats/chr"+str(i)+"_res_"+str(self.res)+".npy",
                     self.piece_size,
                     self.step)
