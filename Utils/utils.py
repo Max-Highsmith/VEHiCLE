@@ -16,6 +16,31 @@ def splitPieces(fn, piece_size, step):
     pieces = np.expand_dims(pieces,1)
     return pieces
 
+def loadSingleConstraints(stri, res):
+    contact_map  = np.loadtxt(stri)
+    rows         = (contact_map[:,0]/res).astype(int)
+    cols         = (contact_map[:,1]/res).astype(int)
+    vals         = contact_map[:,2]
+    bigbin       = np.max((rows, cols))
+    #smallbin     = np.min((rows, cols))
+    mat          = np.zeros((bigbin+1, bigbin+1), dtype='float32')
+    coordinates  = list(range(0, bigbin+1))
+    for r, c, v in zip(rows, cols, vals):
+        if v == "NaN":
+            v = 0
+        mat[r, c] = v
+        mat[c, r] = v
+    diag      = np.diag(mat)
+    removeidx = np.argwhere(diag==0)[:,0]
+    for rem in removeidx:
+        coordinates.remove(rem)
+    mat = np.delete(mat, removeidx, axis=0)
+    mat = np.delete(mat, removeidx, axis=1)
+    per = np.percentile(mat, 99.9)
+    mat = np.clip(mat, 0, per)
+    mat = mat/per
+    return mat, np.array(coordinates)
+
 def loadBothConstraints(stria, strib, res):
     contact_mapa  = np.loadtxt(stria)
     contact_mapb  = np.loadtxt(strib)

@@ -12,10 +12,18 @@ import pytorch_lightning as pl
 import numpy as np
 from torch.utils.data import random_split, DataLoader, Dataset
 
+#Config parameters
+YOUR_CELL_LINE = "Your_Line"
+LOW_RES_HIC    = "custom.hic"
+
+#default
+CHRO = 21
+STEP = 50 
+RES  = 10000
 class CustomModule(pl.LightningDataModule):
 
     def extract_constraint_mats(self):
-        for i in range(1,23):
+        for i in range(CHRO,CHRO+1):
             juice_command = "java -jar "\
                     ""+str(self.juicer_tool)+" dump observed KR "\
                     ""+str(self.low_res_fn)+" "+str(i)+" "+str(i)+""\
@@ -24,41 +32,43 @@ class CustomModule(pl.LightningDataModule):
 
     def __init__(self):
         super().__init__()
-        self.line_name   = "Your_Line"  #add your cell line name
-        self.low_res_fn  = "custom.hic" #add your juicer file here
+        self.line_name   = YOUR_CELL_LINE #"Your_Line"  #add your cell line name
+        self.low_res_fn  = LOW_RES_HIC   #"custom.hic" #add your juicer file here
         self.juicer_tool = "other_tools/juicer_tools_1.22.01.jar" #make sure you have juicer tools from aidenlab
         self.batch_size  = 1
-        self.res         = 10000
-        self.step        = 50
+        self.res         = RES
+        self.step        = STEP
         self.piece_size  = 269
-        if not os.path.exists("self.line_name"):
+        if not os.path.exists(self.line_name):
             subprocess.run("mkdir "+self.line_name, shell=True)
 
         #extract constraints
         if not os.path.exists(self.line_name+"/Constraints"):
             subprocess.run("mkdir "+self.line_name+"/Constraints", shell=True)
-            self.extract_constraint_mats()
+        self.extract_constraint_mats()
         #create numpye()
+        if not os.path.exists(self.line_name+"/Full_Mats_Coords"):
+            subprocess.run("mkdir "+self.line_name+"/Full_Mats_Coords", shell=True)
+
         if not os.path.exists(self.line_name+"/Full_Mats"):
             subprocess.run("mkdir "+self.line_name+"/Full_Mats", shell=True)
-            self.create_numpy()
+        self.create_numpy()
 
         #split numpy()
         if not os.path.exists(self.line_name+"/Splits"):
             subprocess.run("mkdir "+self.line_name+"/Splits", shell=True)
-            self.split_numpy()
+        self.split_numpy()
     
     def create_numpy(self):
-        for i in range(1,23):
+        for i in range(CHRO,CHRO+1):
             low_txt = self.line_name+"/Constraints/low_chr"+str(i)+"_res_"+str(self.res)+".txt"
-            target, data = ut.loadBothConstraints(low_txt,
-                                                low_txt,
-                                                self.res)
+            target, coordinates = ut.loadSingleConstraints(low_txt,self.res)
             np.save(self.line_name+"/Full_Mats/chr"+str(i)+"_res_"+str(self.res), target)
+            np.save(self.line_name+"/Full_Mats_Coords/coords_chr"+str(i)+"_res_"+str(self.res), coordinates)
 
 
     def split_numpy(self):
-        for i in range(1,23):
+        for i in range(CHRO, CHRO+1):
             data = ut.splitPieces(self.line_name+"/Full_Mats/chr"+str(i)+"_res_"+str(self.res)+".npy",
                     self.piece_size,
                     self.step)
@@ -74,7 +84,7 @@ class CustomModule(pl.LightningDataModule):
             self.line_name  = line_name
             self.res        = res
             self.piece_size = piece_size
-            self.chros = list(range(1,4))
+            self.chros = list(range(CHRO,CHRO+1))
             self.data  = np.load(self.line_name+"/Splits/chr_"+str(self.chros[0])+"_res_"+str(self.res)+"_piece_"+str(self.piece_size)+".npy")
             for c, chro in enumerate(self.chros[1:]):
                 temp   = np.load(self.line_name+"/Splits/chr_"+str(chro)+"_res_"+str(self.res)+"_piece_"+str(self.piece_size)+".npy")
@@ -95,20 +105,35 @@ class CustomModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.set)
 
+def enhance(dm, model):
+    low_hic = torch.from_numpy(dm.test_dataloader().dataset.data)
+    enh_hic = torch.zeros_like(low_hic)
+    for i in range(0, low_hic.shape[0]):
+        print(str(i)+"/"+str(low_hic.shape[0]))
+        enh_hic[i:i+1,:,6:-6,6:-6] = model_vehicle(low_hic[i:i+1,:,:,:]).detach()[0][0]
+    return enh_hic
+
+def split2full(splits, coords, step):
+    mat   = np.zeros((coords.shape[0], coords.shape[0]))
+    for i in range(0, splits.shape[0]):
+        print(str(i)+"/"+str(splits.shape[0]))
+        mat[i*step:(i*step)+splits.shape[2], i*step:(i*step)+splits.shape[2]] = splits[i,0]
+    return mat
+
 if __name__ == "__main__":
-    print("main")
     #dataset
     dm = CustomModule()
     dm.setup()
 
-    #Choose index of region interested in viewing
-    region = 10
-    ds = torch.from_numpy(dm.test_dataloader().dataset.data[region:region+1])
-
     #model
     vehicleModel   = vehicle.GAN_Model()
     model_vehicle  = vehicleModel.load_from_checkpoint("Trained_Models/vehicle_gan.ckpt")
-    vehicle_out  = model_vehicle(ds).detach()[0][0]
-    plt.imshow(vehicle_out)
-    plt.show()
-    print(vehicle_out.shape)
+    
+    low_hic  = torch.from_numpy(dm.test_dataloader().dataset.data)
+    coords   = np.load(YOUR_CELL_LINE+"/Full_Mats_Coords/coords_chr"+str(CHRO)+"_res_"+str(RES)+".npy")
+    enh_hic  = enhance(dm, model_vehicle)
+    full_enh = split2full(enh_hic, coords, STEP)
+    if not os.path.isdir(YOUR_CELL_LINE+"/Full_Enhanced"):
+        os.mkdir(YOUR_CELL_LINE+"/Full_Enhanced")
+    np.save(YOUR_CELL_LINE+"/Full_Enhanced/chr"+str(CHRO)+"_res_"+str(RES)+".npy", full_enh)
+

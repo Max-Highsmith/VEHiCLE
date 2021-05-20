@@ -27,10 +27,25 @@ This directory contains code used in running experiments for the paper:
 To view the interactive tunable Hi-C Contact matrix generating GUI run
 > python Generative_GUI.py
 ![gui](Utils/gui.png)
-To use VEHiCLE to enhance your own Hi-C data format your data into a pytorch dataloader with dataset of shape (sample size, 1, 269, 269) and run
-> python enhance_HiC.py 
-after replacing the currently loaded dataset object with your revised dataset.
 
+To enhance your own HiC data run
+> Enhance_Your_Oen_Data.py
+You will need to edit the configuration variables:
+
+YOUR_CELL_LINE : "name of Cell line"
+LOW_RES_HIC    : "location of hic data"
+CHRO	       : "chromosome number to be inspected"
+
+This will extract Low Res HiC Contact Matrices in
+	"<Your_Line>/Full_Mats"
+and will place an enhanced matrix in
+	"<Your_Line>/Full_Enhanced"
+
+To obtain the Insulation Score Identified TAD boundaries run
+> python Insulation.py <enhanced cell_line> <chromosome> <coordinate file> <resolution> <tadfn>
+
+example
+> python Insulation.py GM12878/Full_Enhanced/full_enh.npy 7 GM12878/Full_Mats_Coords/coords_chr7_res_10000.npy 10000 enh.txt
 
 
 ## 4. Reproducibility
