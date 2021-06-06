@@ -26,12 +26,13 @@ def loadSingleConstraints(stri, res):
     mat          = np.zeros((bigbin+1, bigbin+1), dtype='float32')
     coordinates  = list(range(0, bigbin+1))
     for r, c, v in zip(rows, cols, vals):
-        if v == "NaN":
+        if v == "NaN" or v == "nan" or v == np.nan:
             v = 0
         mat[r, c] = v
         mat[c, r] = v
     diag      = np.diag(mat)
-    removeidx = np.argwhere(diag==0)[:,0]
+    removeidx = np.argwhere(diag==0)[:,0].tolist()
+    removeidx.extend(np.argwhere(np.isnan(diag))[:,0])
     for rem in removeidx:
         coordinates.remove(rem)
     mat = np.delete(mat, removeidx, axis=0)

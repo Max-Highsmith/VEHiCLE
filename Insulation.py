@@ -9,7 +9,7 @@ class computeInsulation(torch.nn.Module):
         super(computeInsulation, self).__init__()
         self.window_radius = window_radius
         self.deriv_size    =  deriv_size
-        self.di_pool       = torch.nn.AvgPool2d(kernel_size=(2*window_radius+1), stride=1) #51
+        self.di_pool       = torch.nn.AvgPool2d(kernel_size=(2*window_radius+1), stride=1)
         self.top_pool      = torch.nn.AvgPool1d(kernel_size=deriv_size, stride=1)
         self.bottom_pool   = torch.nn.AvgPool1d(kernel_size=deriv_size, stride=1)
 

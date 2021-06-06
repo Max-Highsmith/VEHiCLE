@@ -13,16 +13,17 @@ import numpy as np
 from torch.utils.data import random_split, DataLoader, Dataset
 
 #Config parameters
-YOUR_CELL_LINE = "Your_Line"
-LOW_RES_HIC    = "custom.hic"
+YOUR_CELL_LINE = "GM18534"
+LOW_RES_HIC    = "GM18534_30.hic"
 
 #default
-CHRO = 21
+CHRO = 17
 STEP = 50 
 RES  = 10000
 class CustomModule(pl.LightningDataModule):
 
     def extract_constraint_mats(self):
+        print("extracting_constraints")
         for i in range(CHRO,CHRO+1):
             juice_command = "java -jar "\
                     ""+str(self.juicer_tool)+" dump observed KR "\
@@ -106,18 +107,30 @@ class CustomModule(pl.LightningDataModule):
         return DataLoader(self.set)
 
 def enhance(dm, model):
+    condense = 6
     low_hic = torch.from_numpy(dm.test_dataloader().dataset.data)
-    enh_hic = torch.zeros_like(low_hic)
+    #enh_hic = torch.zeros_like(low_hic)
+    enh_hic  = torch.zeros(low_hic.shape[0],
+            low_hic.shape[1], 
+            low_hic.shape[2]-(2*condense),
+            low_hic.shape[3]-(2*condense))
     for i in range(0, low_hic.shape[0]):
         print(str(i)+"/"+str(low_hic.shape[0]))
-        enh_hic[i:i+1,:,6:-6,6:-6] = model_vehicle(low_hic[i:i+1,:,:,:]).detach()[0][0]
+        #enh_hic[i:i+1,:,6:-6,6:-6] = model_vehicle(low_hic[i:i+1,:,:,:]).detach()[0][0]
+        enh_hic[i:i+1,:,:,:] = model_vehicle(low_hic[i:i+1,:,:,:]).detach()[0][0]
     return enh_hic
 
-def split2full(splits, coords, step):
+def split2full(splits,
+        coords,
+        step):
+    condense = 6
     mat   = np.zeros((coords.shape[0], coords.shape[0]))
     for i in range(0, splits.shape[0]):
         print(str(i)+"/"+str(splits.shape[0]))
-        mat[i*step:(i*step)+splits.shape[2], i*step:(i*step)+splits.shape[2]] = splits[i,0]
+        #mat[i*step:(i*step)+splits.shape[2], i*step:(i*step)+splits.shape[2]] = splits[i,0]
+        staPos = i*step+condense
+        endPos = (i*step)+splits.shape[2]+condense
+        mat[staPos:endPos, staPos:endPos] = splits[i,0]
     return mat
 
 if __name__ == "__main__":
