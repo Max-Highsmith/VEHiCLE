@@ -2,7 +2,7 @@
 
 This directory contains code used in running experiments for the paper:
 
-![alt text](https://github.com/Max-Highsmith/VEHiCLE/main/VEHiCLE_Logo.png)
+![alt text](https://github.com/Max-Highsmith/VEHiCLE/blob/master/VEHiCLE_Logo.png)
 
 **Highsmith, M. & Cheng, J. VEHiCLE: a Variationally Encoded Hi-C Loss Enhancement algorithm. doi:10.1101/2020.12.07.413559.**
 
